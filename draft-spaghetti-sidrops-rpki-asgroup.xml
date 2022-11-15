@@ -88,7 +88,11 @@
       </t>
       <t>
         RPKI ASGroups are expected to facilitate inter-domain business use cases that depend on an ability to exchange listings of ASNs.
+        Through the use of RPKI ASGroup Opt-Out Listings, resource holders have a degree of control over what Relying Party (RP) implementations emit in relationship to their AS Identifier resources and ASGroups when expanding ASGroups.
+      </t>
+      <t>
         The objective is to offer a RPKI-based successor to plain-text RFC 2622 'as-set' class objects.
+        The main differences between IRR 'as-set' objects and RPKI ASGroups is the robust cryptographically verifiable authorization and the notion of being able to 'opt-out' of an listing (a feature that in the IRR context is not possible).
       </t>
 
       <section anchor="requirements">
