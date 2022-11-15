@@ -1,0 +1,630 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE rfc [
+ <!ENTITY nbsp    "&#160;">
+ <!ENTITY zwsp   "&#8203;">
+ <!ENTITY nbhy   "&#8209;">
+ <!ENTITY wj     "&#8288;">
+]>
+
+<?rfc sortrefs="yes"?>
+<?rfc subcompact="no"?>
+<?rfc symrefs="yes"?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc compact="yes"?>
+<?rfc subcompact="no"?>
+
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     category="std"
+     docName="draft-spaghetti-sidrops-rpki-asgroup-00"
+     ipr="trust200902"
+     xml:lang="en"
+     sortRefs="true"
+     submissionType="IETF"
+     consensus="true"
+     version="3">
+
+  <front>
+
+    <title abbrev="RPKI ASGroup">
+      A profile for RPKI Signed Groupings of Autonomous System Numbers (ASGroup)
+    </title>
+
+    <seriesInfo name="Internet-Draft" value="draft-spaghetti-sidrops-rpki-asgroup-00"/>
+
+    <author fullname="Job Snijders" initials="J." surname="Snijders">
+      <organization>Fastly</organization>
+      <address>
+        <postal>
+          <street/>
+          <code/>
+          <city>Amsterdam</city>
+          <country>Netherlands</country>
+        </postal>
+        <email>job@fastly.com</email>
+      </address>
+    </author>
+
+    <author fullname="Fredrik Korsbäck" initials="FK." surname="Korsbäck">
+      <organization>Amazon Web Services</organization>
+      <address>
+        <postal>
+          <street>Malmskillnadsgatan 36</street>
+          <code>111 57</code>
+          <city>Stockholm</city>
+          <country>Sweden</country>
+        </postal>
+        <email>fkback@amazon.com</email>
+      </address>
+    </author>
+
+    <date />
+
+    <area>ops</area>
+    <workgroup>sidrops</workgroup>
+
+    <keyword>security</keyword>
+    <keyword>cryptography</keyword>
+    <keyword>X.509</keyword>
+    
+    <abstract>
+
+      <t>
+         This document defines a Cryptographic Message Syntax (CMS) protected content type for use with the Resource Public Key Infrastructure (RPKI) to carry a general-purpose listing of Autonomous System Numbers (ASNs) and/or pointers to other groupings of ASNs, called an ASGroup.
+         Additionally, the document specifies a mechanism for ASN holders to opt-out of being listed in a given ASGroup.
+         The objective is to offer a RPKI-based successor to plain-text RFC 2622 'as-set' class objects.
+         When validated, an ASGroup confirms that the respective ASN holder produced the ASGroup object.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="intro">
+      <name>Introduction</name>
+      <t>
+        This document defines a Cryptographic Message Syntax (CMS) <xref target="RFC5652"/> <xref target="RFC6268"/> protected content type for a general-purpose listing of Autonomous System Numbers (ASNs) and/or pointers to other groupings of ASNs (an 'ASGroup'), for use with the Resource Public Key Infrastructure (RPKI) <xref target="RFC6480"/>.
+        The CMS protected content type is intended to provide for the creation and validation of an RPKI ASGroup, a listing signed by the holder of the private key associated with a particular ASN.
+      </t>
+      <t>
+        RPKI ASGroups are expected to facilitate inter-domain business use cases that depend on an ability to exchange listings of ASNs.
+        The objective is to offer a RPKI-based successor to plain-text RFC 2622 'as-set' class objects.
+      </t>
+
+      <section anchor="requirements">
+        <name>Requirements Language</name>
+        <t>
+          The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as described in BCP&nbsp;14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.
+        </t>
+      </section>
+    </section>
+
+    <section anchor="profile">
+      <name>ASGroup and ASGroup Opt-Out Listing Profile</name>
+      <t>
+        ASGroup and ASGroup Opt-Out Listing objects follow the Signed Object Template for the RPKI <xref target="RFC6488"/>.
+      </t>
+
+      <section title="EE Certificates">
+        <t>
+          The Certification Authority (CA) <bcp14>MUST</bcp14> only sign one ASGroup or ASGroup Opt-Out Listing with each EE certificate and <bcp14>MUST</bcp14> generate a new key pair for each new ASGroup or ASGroup Opt-Out Listing.
+          This type of EE certificate is termed a "one-time-use" EE certificate (see <xref target="RFC6487" section="3"/>).
+        </t>
+      </section>
+      <section title="Object Filenames">
+        <t>
+          A guideline for naming ASGroup and ASGroup Opt-Out objects is that the file name chosen in the repository be a value derived from the public key of the EE certificate.
+          One such method of generating a publication name is described in Section 2.1 of <xref target="RFC4387"/>; convert the 160-bit hash of a EE's public key value into a 27-character string using a modified form of Base64 encoding, with an additional modification as proposed in Section 5, table 2, of <xref target="RFC4648"/>.
+        </t>
+      </section>
+    </section>
+
+    <section anchor="content">
+      <name>eContentType</name>
+      <section>
+        <name>The ASGroup eContentType</name>
+        <t>
+          The eContentType for an ASGroup is defined as id-ct-rpkiSignedGrouping, with Object Identifier (OID) 1.2.840.113549.1.9.16.1.TBD.
+        </t>
+        <t>
+          This OID <bcp14>MUST</bcp14> appear within both the eContentType in the encapContentInfo object and the ContentType signed attribute in the signerInfo object (see <xref target="RFC6488"/>).
+        </t>
+      </section>
+      <section>
+        <name>The ASGroup Opt-Out Listing eContentType</name>
+        <t>
+          The eContentType for an ASGroup Opt-Out Listing is defined as id-ct-rpkiSignedGroupingOptOut, with Object Identifier (OID) 1.2.840.113549.1.9.16.1.TBD.
+        </t>
+        <t>
+          This OID <bcp14>MUST</bcp14> appear within both the eContentType in the encapContentInfo object and the ContentType signed attribute in the signerInfo object (see <xref target="RFC6488"/>).
+        </t>
+      </section>
+    </section>
+ 
+     <section anchor="econtent">
+      <name>eContent</name>
+
+      <section>
+        <name>The ASGroup eContent</name>
+        <t>
+          The content of an ASGroup indicates a listing of arbitrary ASNs and pointers to other ASGroups which has been signed with a specific Autonomous System identifier.
+          An ASGroup is formally defined as follows:
+        </t>
+
+        <sourcecode type="asn.1" src="RpkiSignedGrouping-2022.asn"/>
+
+        <section>
+          <name>Version</name>
+          <t>
+            The version number of the RpkiSignedGrouping <bcp14>MUST</bcp14> be 0.
+          </t>
+        </section>
+
+        <section>
+          <name>asID</name>
+          <t>
+            The Autonomous System Number contained here <bcp14>MUST</bcp14> be a subset of the set of resources listed by the EE certificate carried in the CMS certificates field.
+          </t>
+        </section>
+
+        <section>
+          <name>label</name>
+          <t>
+            This field contains type GroupingLabel, a IA5String which <bcp14>MUST</bcp14> consist of at least one and no more than a hundred characters chosen from the set A-Z (UPPERCASE ALPHABET), 0-9, - (HYPHEN), _ (UNDERSCORE), or : (COLON).
+            The label field serves as a differentiator to allow a resource holder to produce multiple different ASGroup objects carrying the same ASN in the asID field for different purposes.
+          </t>
+        </section>
+
+        <section>
+          <name>referenceable</name>
+          <t>
+            This field is a BOOLEAN.
+            If the referenceable boolean is set to FALSE, a Relying Party (RP) which encounters a GroupingPointer in an ASGroup which matches the asID and label of this ASGroup <bcp14>MUST</bcp14> ignore the GroupingPointer.
+            If multiple ASGroup objects exist in the RPKI repositories with the same asID and label, but the referenceable boolean set to different values; the TRUE value takes precedence.
+          </t>
+        </section>
+
+        <section>
+          <name>members</name>
+          <t>
+            This field contains a SEQUENCE of ASIdOrGroupingPointer CHOICE.
+          </t>
+          <section>
+            <name>Choice ASIdOrGroupingPointer</name>
+            <t>
+              This field contains a CHOICE of either an ASID or a GroupingPointer.
+            </t>
+          </section>
+          <section>
+            <name>Element ASID</name>
+            <t>
+              This field contains a INTEGER which is a reference to an Autonomous System Number.
+            </t>
+          </section>
+          <section>
+            <name>Element GroupingPointer</name>
+            <t>
+              This field contains a SEQUENCE which contains an ASID (a reference to an Autonomous System Number) and a GroupingLabel (a IA5String).
+              The asID value and label in a GroupingPointer <bcp14>SHOULD NOT</bcp14> match the asID and label in the RpkiSignedGrouping; e.g. an ASGroup <bcp14>SHOULD NOT</bcp14> point to itself.
+            </t>
+          </section>
+        </section>
+      </section>
+
+      <section>
+        <name>The ASGroup Opt-Out Listing eContent</name>
+        <t>
+          The content of an ASGroup Opt-Out Listing indicates an opt-out listing of arbitrary ASNs and pointers to other ASGroups which has been signed with a specific Autonomous System identifier.
+          The purpose of ASGroup Opt-Out Listings is to provide a means to negate references in ASGroup objects (not under control of the resource holder) towards resources held by the resource holder.
+          An ASGroup Opt-Out Listing is formally defined as follows:
+        </t>
+
+        <sourcecode type="asn.1" src="RpkiSignedGroupingOptOut-2022.asn"/>
+
+        <section>
+          <name>Version</name>
+          <t>
+            The version number of the RpkiSignedGroupingOptOut <bcp14>MUST</bcp14> be 0.
+          </t>
+        </section>
+
+        <section>
+          <name>asID</name>
+          <t>
+            The Autonomous System Number contained here <bcp14>MUST</bcp14> be a subset of the set of resources listed by the EE certificate carried in the CMS certificates field.
+          </t>
+        </section>
+
+        <section>
+          <name>label</name>
+          <t>
+            This optional field contains type GroupingLabel, a IA5String which <bcp14>MUST</bcp14> consist of at least one and no more than a hundred characters chosen from the set A-Z (UPPERCASE ALPHABET), 0-9, - (HYPHEN), _ (UNDERSCORE), or : (COLON).
+            If the field is absent, the ASGroup Opt-Out Listing entry is considered to mean that any ASGroup objects referenced in the optOut SEQUENCE containing members entries which reference this object's asID value <bcp14>MUST</bcp14> be negated by the RP.
+            if the field is present, any ASGroup objects matching the an entry in the optOut SEQUENCE containing a GroupingPointer which match this ASGroup Opt-Out Listing's asID and label <bcp14>MUST</bcp14> be negated.
+          </t>
+        </section>
+
+        <section>
+          <name>optOut</name>
+          <t>
+            This field is a SEQUENCE of ASIdOrGroupingPointer CHOICE entries from which the resource holder wishes to be excluded when expanding ASGroups.
+          </t>
+          <section>
+            <name>asID</name>
+            <t>
+              If the ASIdOrGroupingPointer CHOICE contains an INTEGER; the meaning is that any references to this RpkiSignedGroupingOptOut's asID in ASGroups matching the asID specified herein <bcp14>MUST</bcp14> be negated.
+            </t>
+          </section>
+          <section>
+            <name>GroupingPointer</name>
+            <t>
+              The GroupingPointer is a SEQUENCE of an ASID and GroupingLabel, and providers a more granular opt-out mechanism than the above mentioned opt-out.
+            </t>
+          </section>
+        </section>
+      </section>
+    </section>
+
+    <section anchor="validation">
+      <name>ASGroup Validation</name>
+      <t>
+        Before a Relying Party (RP) can expand an ASGroup into a listing of Autonomous System Numbers, the RP <bcp14>MUST</bcp14> first validate all ASGroup Opt-Out Listings and the ASGroup itself.
+        To validate an ASGroup, the RP <bcp14>MUST</bcp14> perform all the validation checks specified in <xref target="RFC6488"/>.
+        In addition, the RP <bcp14>MUST</bcp14> perform the following validation steps:
+      </t>
+      <ol>
+        <li>
+          The contents of the CMS eContent field <bcp14>MUST</bcp14> conform to all of the constraints described in <xref target="econtent"/>.
+        </li>
+        <li>
+          The Autonomous System Identifier Delegation extension <xref target="RFC3779"/> <bcp14>MUST</bcp14> be present in the EE certificate contained in the CMS certificates field.
+        </li>
+        <li>
+          The AS identifier present in the RpkiSignedGrouping eContent 'asID' field respectively RpkiSignedGroupingOptOut eContent 'asID' field <bcp14>MUST</bcp14> be a subset of those present in the certificate extension.
+        </li>
+        <li>
+          The EE certificate's Autonomous System Identifier Delegation extension <bcp14>MUST NOT</bcp14> contain "inherit" elements.
+        </li>
+        <li>
+          The IP Address Delegation Extension described in <xref target="RFC3779"/> is not used in ASGroup or ASGroup Opt-Out Listings and <bcp14>MUST NOT</bcp14> be present.
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <name>Operational Considerations</name>
+      <t>
+        Multiple ASGroup objects could exist which contain the same asID and label.
+        In such cases the union of members forms the set of members.
+        It is highly <bcp14>RECOMMENDED</bcp14> that a compliant CA maintains a single ASGroup for a given (asID, label) tuple.
+      </t>
+      <t>
+        Multiple ASGroup Opt-Out Listing objects could exist which contain the same asID and label.
+        In such cases the union of optOut entries forms the set of optOut entries.
+        It is highly <bcp14>RECOMMENDED</bcp14> that a compliant CA maintains a single ASGroup Opt-Out Listing for a given (asID, label) tuple.
+      </t>
+      <t>
+        If a CA becomes aware of a match in a valid ASGroup Opt-Out Listing for one of its subordinate ASGroup products; the CA <bcp14>SHOULD</bcp14> remove the offending asID or GroupingPointer from the members of the ASGroup and reissue the object.
+      </t>
+    </section>
+
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>
+        RPs are hereby warned that the data in an ASGroup is self-asserted.
+        When determining the meaning of any data contained in an ASGroup, RPs <bcp14>MUST NOT</bcp14> make any assumptions about the signer beyond the fact that it had sufficient control of the issuing CA to create the object.
+      </t>
+      <t>
+        While a one-time-use EE certificate must only be used to generate and sign a single ASGroup object, CAs technically are not restricted from generating and signing multiple different ASGroup objects with a single key pair.
+        Any ASGroup objects sharing the same EE certificate cannot be revoked individually.
+      </t>
+    </section>
+
+    <section anchor="iana">
+      <name>IANA Considerations</name>
+
+      <section>
+        <name>SMI Security for S/MIME CMS Content Type (1.2.840.113549.1.9.16.1)</name>
+        <t>
+          IANA is requested to allocated the following in the "SMI Security for S/MIME CMS Content Type (1.2.840.113549.1.9.16.1)" registry:
+        </t>
+
+        <table anchor="cms-content-type" align="center">
+          <name></name>
+          <thead>
+            <tr>
+              <th rowspan="1" colspan="1">Decimal</th>
+              <th rowspan="1" colspan="1">Description</th>
+              <th rowspan="1" colspan="1">References</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+        	<td>TBD</td>
+        	<td>id-ct-rpkiSignedGrouping</td>
+        	<td>draft-spaghetti-sidrops-rpki-asgroup</td>
+              </tr>
+              <tr>
+        	<td>TBD</td>
+        	<td>id-ct-rpkiSignedGroupingOptOut</td>
+        	<td>draft-spaghetti-sidrops-rpki-asgroup</td>
+              </tr>
+
+            </tbody>
+        </table>
+      </section>
+
+      <section>
+        <name>RPKI Signed Objects</name>
+        <t>
+          IANA is requested to register two OIDs in the "RPKI Signed Objects" registry <xref target="RFC6488"/> as follows:
+        </t>
+
+        <table anchor="rpki-signed-asgroup" align="center">
+          <name></name>
+          <thead>
+            <tr>
+              <th rowspan="1" colspan="1">Name</th>
+              <th rowspan="1" colspan="1">OID</th>
+              <th rowspan="1" colspan="1">Reference</th>
+            </tr>
+        </thead>
+          <tbody>
+            <tr>
+              <td>Signed ASGroup</td>
+              <td>1.2.840.113549.1.9.16.1.TBD</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+            <tr>
+              <td>Signed ASGroup Opt-Out Listing</td>
+              <td>1.2.840.113549.1.9.16.1.TBD</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <name>RPKI Repository Name Schemes</name>
+        <t>
+          IANA is requested to add the Signed ASGroup file extension to the "RPKI Repository Name Schemes" registry <xref target="RFC6481"/> as follows:
+        </t>
+
+        <table anchor="rpki-repository-name-schemes" align="center">
+          <name></name>
+          <thead>
+            <tr>
+              <th rowspan="1" colspan="1">Filename Extension</th>
+              <th rowspan="1" colspan="1">RPKI Object</th>
+              <th rowspan="1" colspan="1">Reference</th>
+            </tr>
+        </thead>
+          <tbody>
+            <tr>
+              <td>.grp</td>
+              <td>Signed ASGroup</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+            <tr>
+              <td>.ool</td>
+              <td>Signed ASGroup Opt-Out Listing</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <name>SMI Security for S/MIME Module Identifier (1.2.840.113549.1.9.16.0)</name>
+        <t>
+          IANA is requested to allocate the following in the "SMI Security for S/MIME Module Identifier (1.2.840.113549.1.9.16.0)" registry:
+        </t>
+
+        <table anchor="smi-security-identifier" align="center">
+          <name></name>
+          <thead>
+            <tr>
+              <th rowspan="1" colspan="1">Decimal</th>
+              <th rowspan="1" colspan="1">Description</th>
+              <th rowspan="1" colspan="1">References</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TBD</td>
+              <td>id-mod-rpkiSignedGrouping-2022</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+            <tr>
+              <td>TBD</td>
+              <td>id-mod-rpkiSignedGroupingOptOut-2022</td>
+              <td>draft-spaghetti-sidrops-rpki-asgroup</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <name>Media Types</name>
+        <t>
+          IANA is requested to register the media types "application/rpki-asgroup" and "application/rpki-asgroupoptout" in the "Media Types" registry as follows:
+        </t>
+        <section>
+        <name>ASGroup Media Type</name>
+        <dl spacing="compact">
+           <dt>Type name:</dt><dd>application</dd>
+           <dt>Subtype name:</dt><dd>rpki-asgroup</dd>
+           <dt>Required parameters:</dt><dd>N/A</dd>
+           <dt>Optional parameters:</dt><dd>N/A</dd>
+           <dt>Encoding considerations:</dt><dd>binary</dd>
+           <dt>Security considerations:</dt><dd>Carries an RPKI Signed ASGroup. This media type contains no active content. See <xref target="validation"/> of draft-spaghetti-sidrops-rpki-asgroup for further information.</dd>
+           <dt>Interoperability considerations:</dt><dd>N/A</dd>
+           <dt>Published specification:</dt><dd>draft-spaghetti-sidrops-rpki-asgroup</dd>
+           <dt>Applications that use this media type:</dt><dd>RPKI operators</dd>
+           <dt>Fragment identifier considerations:</dt><dd>N/A</dd>
+           <dt>Additional information:</dt>
+           <dd>
+           <dl spacing="compact">
+             <dt><br/></dt><dd/>
+             <dt>Content:</dt><dd>This media type is a signed object, as defined in [RFC6488], which contains a payload of a list of checksums as defined in draft-spaghetti-sidrops-rpki-asgroup.</dd>
+             <dt>Magic number(s):</dt><dd>N/A</dd>
+             <dt>File extension(s):</dt><dd>.grp</dd>
+             <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+           </dl>
+           </dd>
+           <dt>Person &amp; email address to contact for further information:</dt><dd>Job Snijders (job@fastly.com)</dd>
+           <dt>Intended usage:</dt><dd>COMMON</dd>
+           <dt>Restrictions on usage:</dt><dd>N/A</dd>
+           <dt>Author:</dt><dd>Job Snijders (job@fastly.com)</dd>
+           <dt>Change controller:</dt><dd>IETF</dd>
+        </dl>
+        </section>
+        <section>
+        <name>ASGroup Opt-Out Listing Media Type</name>
+        <dl spacing="compact">
+           <dt>Type name:</dt><dd>application</dd>
+           <dt>Subtype name:</dt><dd>rpki-asgroupoptout</dd>
+           <dt>Required parameters:</dt><dd>N/A</dd>
+           <dt>Optional parameters:</dt><dd>N/A</dd>
+           <dt>Encoding considerations:</dt><dd>binary</dd>
+           <dt>Security considerations:</dt><dd>Carries an RPKI Signed ASGroup Opt-out. This media type contains no active content. See <xref target="validation"/> of draft-spaghetti-sidrops-rpki-asgroup for further information.</dd>
+           <dt>Interoperability considerations:</dt><dd>N/A</dd>
+           <dt>Published specification:</dt><dd>draft-spaghetti-sidrops-rpki-asgroup</dd>
+           <dt>Applications that use this media type:</dt><dd>RPKI operators</dd>
+           <dt>Fragment identifier considerations:</dt><dd>N/A</dd>
+           <dt>Additional information:</dt><dd>
+           <dl spacing="compact">
+             <dt><br/></dt><dd/>
+             <dt>Content:</dt><dd>This media type is a signed object, as defined in [RFC6488], which contains a payload of an opt-out list as defined in draft-spaghetti-sidrops-rpki-asgroup.</dd>
+             <dt>Magic number(s):</dt><dd>N/A</dd>
+             <dt>File extension(s):</dt><dd>.ool</dd>
+             <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+           </dl>
+         </dd>
+           <dt>Person &amp; email address to contact for further information:</dt><dd>Job Snijders (job@fastly.com)</dd>
+           <dt>Intended usage:</dt><dd>COMMON</dd>
+           <dt>Restrictions on usage:</dt><dd>N/A</dd>
+           <dt>Author:</dt><dd>Job Snijders (job@fastly.com)</dd>
+           <dt>Change controller:</dt><dd>IETF</dd>
+        </dl>
+        </section>
+      </section>
+    </section>
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3779.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5652.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6481.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6487.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6488.xml"/>
+          <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+      </references>
+
+      <references>
+        <name>Informative References</name>
+
+       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4387.xml"/>
+       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4648.xml"/>
+       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6268.xml"/>
+       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6480.xml"/>
+      </references>
+    </references>
+
+    <section anchor="acknowledgements">
+      <name>Acknowledgements</name>
+      <t>
+        The authors wish to thank TBD...
+<!--
+          <contact fullname="George Michaelson"/>,
+          <contact fullname="Geoff Huston"/>,
+          <contact fullname="Randy Bush"/>,
+          <contact fullname="Stephen Kent"/>,
+          <contact fullname="Matt Lepinski"/>,
+          <contact fullname="Rob Austein"/>,
+          <contact fullname="Ted Unangst"/>,
+          and <contact fullname="Marc Espie"/>
+        for prior art.
+-->
+      </t>
+    </section>
+
+    <section anchor="example-asgroup">
+      <name>Example ASGroup eContent Payload</name>
+      <t>
+        Below an example of a DER encoded ASGroup eContent is provided with annotation following the '#' character.
+        The example is fairly simple; the resource holder managing AS 16509 produced a ASGroup called "AS16509:AS-AMAZON" (asID + ':' + label), which cannot be referenced by other ASGroups, and which has 2 members: AS 16509 and 'AS16509:CUSTOMERS' (the latter being a GroupingPointer).
+      </t>
+      <artwork>
+<![CDATA[
+$ echo 30290202407d160941532d414d415a4f4e01010030150202407d300f020240\
+7d1609435553544f4d455253 \
+| xxd -r -ps \
+| openssl asn1parse -inform DER -i
+    0:d=0  hl=2 l=  41 cons: SEQUENCE                 # RpkiSignedGrouping
+    2:d=1  hl=2 l=   2 prim:  INTEGER      :407D      # asID 16509
+    6:d=1  hl=2 l=   9 prim:  IA5STRING    :AS-AMAZON # label
+   17:d=1  hl=2 l=   1 prim:  BOOLEAN      :0         # not referenceable
+   20:d=1  hl=2 l=  21 cons:  SEQUENCE                # members
+   22:d=2  hl=2 l=   2 prim:   INTEGER     :407D      #   AS 16509
+   26:d=2  hl=2 l=  15 cons:   SEQUENCE               #   GroupingPointer
+   28:d=3  hl=2 l=   2 prim:    INTEGER    :407D      #     AS 16509
+   32:d=3  hl=2 l=   9 prim:    IA5STRING  :CUSTOMERS #     label CUSTOMERS
+]]>
+      </artwork>
+    </section>
+
+     <section anchor="example-asgroupoptout">
+      <name>Example ASGroup Opt-Out Listing eContent Payload</name>
+      <t>
+        Below an example of a DER encoded ASGroup Opt-Out Listing eContent is provided with annotation following the '#' character.
+        The example is as following: the resource holder managing AS 15562 produced a ASGroup Opt-Out Listing and which has 1 optOut: 'AS16509:CUSTOMERS'.
+        Should ASGroup 'AS16509:CUSTOMERS' (directly or indirectly) contain a reference to AS 15562; a Relying Party should omit 15562 from its output.
+      </t>
+      <artwork>
+<![CDATA[
+$ echo 301702023cca3011300f0202407d1609435553544f4d455253 \
+| xxd -r -ps \
+| openssl asn1parse -inform DER -i
+    0:d=0  hl=2 l=  23 cons: SEQUENCE                  # RpkiSignedGroupingOptOut
+    2:d=1  hl=2 l=   2 prim:  INTEGER       :3CCA      # AS 15562
+    6:d=1  hl=2 l=  17 cons:  SEQUENCE                 # optOut
+    8:d=2  hl=2 l=  15 cons:   SEQUENCE                #   GroupingPointer
+   10:d=3  hl=2 l=   2 prim:    INTEGER     :407D      #     AS 16509
+   14:d=3  hl=2 l=   9 prim:    IA5STRING   :CUSTOMERS #     label CUSTOMERS
+]]>
+      </artwork>
+    </section>
+
+    <section removeInRFC="true">
+      <name>Implementation status</name>
+      <t>
+        This section records the status of known implementations of the protocol defined by this specification at the time of posting of this Internet-Draft, and is based on a proposal described in RFC 7942.
+        The description of implementations in this section is intended to assist the IETF in its decision processes in progressing drafts to RFCs.
+        Please note that the listing of any individual implementation here does not imply endorsement by the IETF.
+        Furthermore, no effort has been spent to verify the information presented here that was supplied by IETF contributors.
+        This is not intended as, and must not be construed to be, a catalog of available implementations or their features.
+        Readers are advised to note that other implementations may exist.
+      </t>
+      <t>
+        According to RFC 7942, "this will allow reviewers and working groups to assign due consideration to documents that have the benefit of running code, which may serve as evidence of valuable experimentation and feedback that have made the implemented protocols more mature.
+        It is up to the individual working groups to use this information as they see fit".
+      </t>
+
+      <ul>
+        <li>
+          Example .grp and .ool files were created by Job Snijders with the use of asn1c and OpenSSL.
+        </li>
+      </ul>
+
+    </section>
+
+  </back>
+
+</rfc>

@@ -1,0 +1,43 @@
+RpkiSignedGrouping-2022
+  { iso(1) member-body(2) us(840) rsadsi(113549)
+    pkcs(1) pkcs9(9) smime(16) mod(0)
+    id-mod-rpkiSignedGrouping-2022(TBD) }
+
+DEFINITIONS EXPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  CONTENT-TYPE
+  FROM CryptographicMessageSyntax-2010 -- in [RFC6268]
+    { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
+      pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
+
+ct-rpkiSignedGrouping CONTENT-TYPE ::=
+  { TYPE RpkiSignedGrouping
+    IDENTIFIED BY id-ct-rpkiSignedGrouping }
+
+id-ct-signedChecklist OBJECT IDENTIFIER ::=
+  { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
+    pkcs-9(9) id-smime(16) id-ct(1) TBD }
+
+RpkiSignedGrouping ::= SEQUENCE {
+  version [0]      INTEGER DEFAULT 0,
+  asID             ASID,
+  label            GroupingLabel (SIZE(1..100)),
+  referenceable    BOOLEAN DEFAULT TRUE,
+  members          SEQUENCE (SIZE(0..MAX)) OF ASIdOrGroupingPointer }
+
+ASIdOrGroupingPointer ::= CHOICE {
+  id               ASID,
+  pointer          GroupingPointer }
+
+GroupingPointer ::= SEQUENCE {
+  asID             ASID,
+  label            GroupingLabel (SIZE(1..100)) }
+
+ASID ::= INTEGER (1..4294967295)
+
+GroupingLabel ::=
+  IA5String (FROM("A".."Z" | "0".."9" | ":" | "_" | "-"))
+
+END
