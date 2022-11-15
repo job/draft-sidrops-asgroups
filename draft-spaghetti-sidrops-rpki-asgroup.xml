@@ -47,7 +47,7 @@
     </author>
 
     <author fullname="Fredrik Korsbäck" initials="FK." surname="Korsbäck">
-      <organization>Amazon Web Services</organization>
+      <organization abbrev="Amazon">Amazon Web Services</organization>
       <address>
         <postal>
           <street>Malmskillnadsgatan 36</street>
@@ -272,7 +272,7 @@
     <section anchor="validation">
       <name>ASGroup Validation</name>
       <t>
-        Before a Relying Party (RP) can expand an ASGroup into a listing of Autonomous System Numbers, the RP <bcp14>MUST</bcp14> first validate all ASGroup Opt-Out Listings and the ASGroup itself.
+        Before a Relying Party (RP) can expand an ASGroup into a listing of Autonomous System Numbers, the RP <bcp14>MUST</bcp14> first validate all ASGroup Opt-Out Listings to be able to honor opt-Out attestations.
         To validate an ASGroup, the RP <bcp14>MUST</bcp14> perform all the validation checks specified in <xref target="RFC6488"/>.
         In addition, the RP <bcp14>MUST</bcp14> perform the following validation steps:
       </t>
