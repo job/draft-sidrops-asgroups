@@ -193,6 +193,9 @@
           <name>members</name>
           <t>
             This field contains a SEQUENCE of ASIdOrGroupingPointer CHOICE.
+            The elements <bcp14>MUST</bcp14> be ordered as following: ASId elements precede GroupingPointer elements.
+            The ASId elements <bcp14>MUST</bcp14> be ordered in numerically ascending order.
+            The GroupingPointer elements <bcp14>MUST</bcp14> be ordered in ascending order: first pass by numeric value of the ASID field, second pass sorting the label field in lexicographical order.
           </t>
           <section>
             <name>Choice ASIdOrGroupingPointer</name>
