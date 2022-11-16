@@ -1,4 +1,4 @@
-# draft-spaghetti-sidrops-rpki-groupings
+# draft-spaghetti-sidrops-rpki-asgroup
 
 Work in progress repository for Internet-Draft draft-spaghetti-sidrops-rpki-asgroup
 
