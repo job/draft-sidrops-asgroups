@@ -591,6 +591,28 @@ $ echo 302c0202407d160941532d414d415a4f4e01010030180202407d30120202\
  32:d=3  hl=2 l=  12 prim:    IA5STRING  :AS-CUSTOMERS #  /` AS16509:AS-CUSTOMERS
 ]]>
       </artwork>
+      <t>
+        The 'AS16509:AS-CUSTOMERS' ASGroup object is as following:
+      </t>
+      <artwork>
+<![CDATA[
+$ echo 302d0202407d160c41532d435553544f4d455253301902021c380202231b\
+0202391a02023cca02024a67020300f541 \
+| xxd -r -ps
+| openssl asn1parse -inform DER -i
+  0:d=0  hl=2 l=  45 cons: SEQUENCE
+  2:d=1  hl=2 l=   2 prim:  INTEGER    :407D     # signed by AS16509
+  6:d=1  hl=2 l=  12 prim:  IA5STRING  :AS-CUSTOMERS
+ 20:d=1  hl=2 l=  25 cons:  SEQUENCE
+ 22:d=2  hl=2 l=   2 prim:   INTEGER    :1C38
+ 26:d=2  hl=2 l=   2 prim:   INTEGER    :231B
+ 30:d=2  hl=2 l=   2 prim:   INTEGER    :391A
+ 34:d=2  hl=2 l=   2 prim:   INTEGER    :3CCA    # AS15562
+ 38:d=2  hl=2 l=   2 prim:   INTEGER    :4A67
+ 42:d=2  hl=2 l=   3 prim:   INTEGER    :F541
+]]>
+      </artwork>
+
     </section>
 
      <section anchor="example-asgroupoptout">
@@ -613,6 +635,11 @@ $ echo 301a02023cca301430120202407d160c41532d435553544f4d455253 \
  14:d=3  hl=2 l=  12 prim:    IA5STRING   :AS-CUSTOMERS # /` AS16509:AS-CUSTOMERS
 ]]>
       </artwork>
+
+    <t>
+      Based on the above 2 ASGroup payloads and 1 ASGroup Opt-Out Listing payload, a compliant validator would emit 7224, 8987, 14618, 16509, 19047, and 62785 when expanding 'AS16509:AS-AMAZON'.
+    </t>
+
     </section>
 
     <section removeInRFC="true">
