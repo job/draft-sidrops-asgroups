@@ -299,7 +299,7 @@
       <t>
         A list of Validated ASGroup Listings (VALs) is produced by applying a recursive descent to each ASGroup, noting members which are ASIDs and following GroupingPointers.
         GroupingPointers which point to an ASGroup which has the 'referenceable' boolean set to false <bcp14>MUST</bcp14> be ignored.
-        Members of an ASGroup which match an ASGroup Opt-Out Listing entry <bcp14>MUST<bcp14> be ignored.
+        Members of an ASGroup which match an ASGroup Opt-Out Listing entry <bcp14>MUST</bcp14> be ignored.
       </t>
     </section>
 
