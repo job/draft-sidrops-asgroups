@@ -572,23 +572,23 @@
       <name>Example ASGroup eContent Payload</name>
       <t>
         Below an example of a DER encoded ASGroup eContent is provided with annotation following the '#' character.
-        The example is fairly simple; the resource holder managing AS 16509 produced a ASGroup called "AS16509:AS-AMAZON" (asID + ':' + label), which cannot be referenced by other ASGroups, and which has 2 members: AS 16509 and 'AS16509:CUSTOMERS' (the latter being a GroupingPointer).
+        The example is fairly simple; the resource holder managing AS 16509 produced a ASGroup called "AS16509:AS-AMAZON" (asID + ':' + label), which cannot be referenced by other ASGroups, and which has 2 members: AS 16509 and 'AS16509:AS-CUSTOMERS' (the latter being a GroupingPointer).
       </t>
       <artwork>
 <![CDATA[
-$ echo 30290202407d160941532d414d415a4f4e01010030150202407d300f020240\
-7d1609435553544f4d455253 \
+$ echo 302c0202407d160941532d414d415a4f4e01010030180202407d30120202\
+407d160c41532d435553544f4d455253 \
 | xxd -r -ps \
 | openssl asn1parse -inform DER -i
-    0:d=0  hl=2 l=  41 cons: SEQUENCE                 # RpkiSignedGrouping
-    2:d=1  hl=2 l=   2 prim:  INTEGER      :407D      # asID 16509
-    6:d=1  hl=2 l=   9 prim:  IA5STRING    :AS-AMAZON # label
-   17:d=1  hl=2 l=   1 prim:  BOOLEAN      :0         # not referenceable
-   20:d=1  hl=2 l=  21 cons:  SEQUENCE                # members
-   22:d=2  hl=2 l=   2 prim:   INTEGER     :407D      #   AS 16509
-   26:d=2  hl=2 l=  15 cons:   SEQUENCE               #   GroupingPointer
-   28:d=3  hl=2 l=   2 prim:    INTEGER    :407D      #     AS 16509
-   32:d=3  hl=2 l=   9 prim:    IA5STRING  :CUSTOMERS #     label CUSTOMERS
+  0:d=0  hl=2 l=  44 cons: SEQUENCE                    # RpkiSignedGrouping   
+  2:d=1  hl=2 l=   2 prim:  INTEGER      :407D         # asID 16509
+  6:d=1  hl=2 l=   9 prim:  IA5STRING    :AS-AMAZON    # label
+ 17:d=1  hl=2 l=   1 prim:  BOOLEAN      :0            # not referenceable
+ 20:d=1  hl=2 l=  24 cons:  SEQUENCE                   # contains 2 members
+ 22:d=2  hl=2 l=   2 prim:   INTEGER     :407D         # AS16509
+ 26:d=2  hl=2 l=  18 cons:   SEQUENCE                  # GroupingPointer
+ 28:d=3  hl=2 l=   2 prim:    INTEGER    :407D         #  \
+ 32:d=3  hl=2 l=  12 prim:    IA5STRING  :AS-CUSTOMERS #  /` AS16509:AS-CUSTOMERS
 ]]>
       </artwork>
     </section>
@@ -597,20 +597,20 @@ $ echo 30290202407d160941532d414d415a4f4e01010030150202407d300f020240\
       <name>Example ASGroup Opt-Out Listing eContent Payload</name>
       <t>
         Below an example of a DER encoded ASGroup Opt-Out Listing eContent is provided with annotation following the '#' character.
-        The example is as following: the resource holder managing AS 15562 produced a ASGroup Opt-Out Listing and which has 1 optOut: 'AS16509:CUSTOMERS'.
-        Should ASGroup 'AS16509:CUSTOMERS' (directly or indirectly) contain a reference to AS 15562; a Relying Party should omit 15562 from its output.
+        The example is as following: the resource holder managing AS 15562 produced a ASGroup Opt-Out Listing and which has 1 optOut: 'AS16509:AS-CUSTOMERS'.
+        Should ASGroup 'AS16509:AS-CUSTOMERS' (directly or indirectly) contain a reference to AS 15562; a Relying Party should omit 15562 from its output.
       </t>
       <artwork>
 <![CDATA[
-$ echo 301702023cca3011300f0202407d1609435553544f4d455253 \
+$ echo 301a02023cca301430120202407d160c41532d435553544f4d455253 \
 | xxd -r -ps \
 | openssl asn1parse -inform DER -i
-    0:d=0  hl=2 l=  23 cons: SEQUENCE                  # RpkiSignedGroupingOptOut
-    2:d=1  hl=2 l=   2 prim:  INTEGER       :3CCA      # AS 15562
-    6:d=1  hl=2 l=  17 cons:  SEQUENCE                 # optOut
-    8:d=2  hl=2 l=  15 cons:   SEQUENCE                #   GroupingPointer
-   10:d=3  hl=2 l=   2 prim:    INTEGER     :407D      #     AS 16509
-   14:d=3  hl=2 l=   9 prim:    IA5STRING   :CUSTOMERS #     label CUSTOMERS
+  0:d=0  hl=2 l=  26 cons: SEQUENCE                     # RpkiSignedGroupingOptOut
+  2:d=1  hl=2 l=   2 prim:  INTEGER       :3CCA         # produced by AS15562
+  6:d=1  hl=2 l=  20 cons:  SEQUENCE                    # optOut
+  8:d=2  hl=2 l=  18 cons:   SEQUENCE                   #   GroupingPointer
+ 10:d=3  hl=2 l=   2 prim:    INTEGER     :407D         # \
+ 14:d=3  hl=2 l=  12 prim:    IA5STRING   :AS-CUSTOMERS # /` AS16509:AS-CUSTOMERS
 ]]>
       </artwork>
     </section>
