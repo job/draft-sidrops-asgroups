@@ -176,7 +176,7 @@
           <t>
             This field contains type GroupingLabel, a IA5String which <bcp14>MUST</bcp14> consist of at least one and no more than a hundred characters chosen from the set A-Z (UPPERCASE ALPHABET), 0-9, - (HYPHEN), _ (UNDERSCORE), or : (COLON).
             The label field serves as a differentiator to allow a resource holder to produce multiple different ASGroup objects carrying the same ASN in the asID field for different purposes.
-            The value of the label field <bcp14>MUST</bcp14> adhere to the same naming conventions and constraints as 'as-set' class objects described in <xref target="RFC2622"/>.
+            The value of the label field <bcp14>MUST</bcp14> adhere to the same naming conventions and constraints as hierarchical 'as-set' set names described in Section 5 of <xref target="RFC2622"/>; noting the first component of the set name is the value of the above asID field.
           </t>
         </section>
 
