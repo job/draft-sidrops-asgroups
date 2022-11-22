@@ -556,18 +556,11 @@
     <section anchor="acknowledgements">
       <name>Acknowledgements</name>
       <t>
-        The authors wish to thank Ties de Kock for initial feedback.
-<!--
-          <contact fullname="George Michaelson"/>,
-          <contact fullname="Geoff Huston"/>,
-          <contact fullname="Randy Bush"/>,
-          <contact fullname="Stephen Kent"/>,
-          <contact fullname="Matt Lepinski"/>,
-          <contact fullname="Rob Austein"/>,
-          <contact fullname="Ted Unangst"/>,
-          and <contact fullname="Marc Espie"/>
-        for prior art.
--->
+        The authors wish to thank
+        <contact fullname="Ties de Kock"/>
+        and
+        <contact fullname="Russ Housley"/>
+        for feedback.
       </t>
     </section>
 

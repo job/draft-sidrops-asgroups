@@ -19,7 +19,7 @@ IMPORTS
       id-mod-rpkiSignedGrouping-2022(TBD) }
 
 ct-rpkiSignedGroupingOptOut CONTENT-TYPE ::=
-  { TYPE RpkiSignedGrouping
+  { TYPE RpkiSignedGroupingOptOut
     IDENTIFIED BY id-ct-rpkiSignedGroupingOptOut }
 
 id-ct-signedGroupingOptOut OBJECT IDENTIFIER ::=

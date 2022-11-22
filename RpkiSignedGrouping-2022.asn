@@ -16,7 +16,7 @@ ct-rpkiSignedGrouping CONTENT-TYPE ::=
   { TYPE RpkiSignedGrouping
     IDENTIFIED BY id-ct-rpkiSignedGrouping }
 
-id-ct-signedChecklist OBJECT IDENTIFIER ::=
+id-ct-rpkiSignedGrouping OBJECT IDENTIFIER ::=
   { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
     pkcs-9(9) id-smime(16) id-ct(1) TBD }
 
